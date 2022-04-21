@@ -1,3 +1,4 @@
+import { useTheme } from "@emotion/react";
 import {
   Box,
   Button,
@@ -6,12 +7,15 @@ import {
   MenuItem,
   Select,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { CarCard } from "./CarCard";
 import { useCarsContext } from "./Provider";
 
 export const CarsRender = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { cars } = useCarsContext();
   const [clicked, setClicked] = React.useState(null);
   const [category, setCategory] = React.useState("Todos");
@@ -19,23 +23,23 @@ export const CarsRender = () => {
 
   const chipsArr = [
     {
-      name: "Todos",
+      value: "Todos",
       label: "Todos",
     },
     {
-      name: "Sedan",
+      value: "Sedan",
       label: "Sedan",
     },
     {
-      name: "Hatchback",
+      value: "Hatchback",
       label: "Hatchback",
     },
     {
-      name: "Pickups y Comerciales",
+      value: "Pickups y Comerciales",
       label: "Pickups y Comerciales",
     },
     {
-      name: "SUVs",
+      value: "SUVs",
       label: "SUVs",
     },
   ];
@@ -91,36 +95,82 @@ export const CarsRender = () => {
             justifyContent: "space-between",
           }}
         >
-          <Box display="flex" alignItems="center">
-            <Typography
-              fontFamily={"inherit"}
-              fontSize={14}
-              fontWeight={600}
-              lineHeight={1}
-              letterSpacing={0.08}
-              color={"#373737"}
+          {!isMobile ? (
+            <Box display="flex" alignItems="center">
+              <Typography
+                fontFamily={"inherit"}
+                fontSize={14}
+                fontWeight={600}
+                lineHeight={1}
+                letterSpacing={0.08}
+                color={"#373737"}
+              >
+                Filtrar por:
+              </Typography>
+              {chipsArr.map((chip, index) => (
+                <Chip
+                  key={index}
+                  label={chip.label}
+                  onClick={() => setCategory(chip.value)}
+                  sx={{
+                    margin: "0px 10px",
+                    backgroundColor:
+                      category === chip.value ? "#f7f7f7" : "transparent",
+                    fontFamily: "inherit",
+                    fontSize: 14,
+                    fontWeight: "normal",
+                    lineHeight: 1,
+                    letterSpacing: 0.08,
+                    color: "#373737",
+                  }}
+                />
+              ))}
+            </Box>
+          ) : (
+            <Select
+              variant="standard"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              sx={{
+                fontFamily: "inherit",
+                fontSize: 14,
+                fontWeight: "normal",
+                fontWeight: 600,
+                lineHeight: 1,
+                letterSpacing: 0.08,
+                color: "#373737",
+                "&:after": {
+                  borderBottom: "none",
+                },
+                "&:before": {
+                  borderBottom: "none",
+                  content: "none",
+                },
+                "& .css-1rxz5jq-MuiSelect-select-MuiInputBase-input-MuiInput-input.css-1rxz5jq-MuiSelect-select-MuiInputBase-input-MuiInput-input.css-1rxz5jq-MuiSelect-select-MuiInputBase-input-MuiInput-input":
+                  {
+                    paddingTop: "9px",
+                  },
+              }}
             >
-              Filtrar por:
-            </Typography>
-            {chipsArr.map((chip, index) => (
-              <Chip
-                key={index}
-                label={chip.label}
-                onClick={() => setCategory(chip.name)}
-                sx={{
-                  margin: "0px 10px",
-                  backgroundColor:
-                    category === chip.name ? "#f7f7f7" : "transparent",
-                  fontFamily: "inherit",
-                  fontSize: 14,
-                  fontWeight: "normal",
-                  lineHeight: 1,
-                  letterSpacing: 0.08,
-                  color: "#373737",
-                }}
-              />
-            ))}
-          </Box>
+              {chipsArr.map((option, index) => (
+                <MenuItem
+                  key={index}
+                  value={option.value}
+                  sx={{
+                    fontFamily: "inherit",
+                    fontSize: 14,
+                    fontWeight: "normal",
+                    lineHeight: 1,
+                    letterSpacing: 0.08,
+                    color: "#373737",
+                    padding: "15px 30px",
+                  }}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
           <Select
             variant="standard"
             value={sortedBy}

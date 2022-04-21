@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import Head from "next/head";
-import PersistentDrawerRight from "../../components/Drawer";
+import Main from "../../components/Main";
 import ContextProvider from "../../components/Provider";
 
 export default function Home({ data }) {
@@ -12,7 +12,7 @@ export default function Home({ data }) {
           <meta name="description" content="Ego challenge by Franh01" />
           <link rel="icon" href="favicon.ico" />
         </Head>
-        <PersistentDrawerRight />
+        <Main />
       </Box>
     </ContextProvider>
   );

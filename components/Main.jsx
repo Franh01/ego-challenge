@@ -12,7 +12,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import { Tab, Tabs } from "@mui/material";
+import { Tab, Tabs, useMediaQuery } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -57,27 +57,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#373737",
   },
 }));
-
 const drawerWidth = 390;
-
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
-  ({ theme, open }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginRight: -drawerWidth,
-    ...(open && {
-      transition: theme.transitions.create("margin", {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginRight: 0,
-    }),
-  })
-);
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -106,13 +86,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function PersistentDrawerRight() {
+export default function Main() {
   const { cars } = useCarsContext();
   const router = useRouter();
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("models");
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   React.useEffect(() => {
     if (cars.length > 1) {
@@ -135,7 +116,13 @@ export default function PersistentDrawerRight() {
   };
 
   return (
-    <Box sx={{ display: "flex", position: "relative", minHeight: "100vh" }}>
+    <Box
+      sx={{
+        display: "flex",
+        position: "relative",
+        minHeight: "100vh",
+      }}
+    >
       <AppBar position="fixed" open={open} color="white" elevation={1}>
         <Toolbar
           sx={{
@@ -146,31 +133,39 @@ export default function PersistentDrawerRight() {
             root: classes.root,
           }}
         >
-          <Box mr={10} minHeight={70} display="flex" alignItems={"center"}>
+          <Box
+            width={isMobile ? "100%" : "auto"}
+            mr={10}
+            minHeight={70}
+            display="flex"
+            alignItems={"center"}
+          >
             <Image src="/media/icon.png" width={40} height={40}></Image>
           </Box>
-          <Box sx={{ width: "100%" }}>
-            <Tabs
-              value={value}
-              textColor="primary"
-              indicatorColor="primary"
-              classes={{
-                root: classes.tabsRoot,
-              }}
-            >
-              <Tab
-                className={classes.tabs}
-                value="models"
-                label="Modelos"
-                onClick={onTabClick}
-              />
-              <Tab
-                className={classes.tabs}
-                value="detail"
-                label="Ficha de modelo"
-              />
-            </Tabs>
-          </Box>
+          {!isMobile && (
+            <Box sx={{ width: "100%" }}>
+              <Tabs
+                value={value}
+                textColor="primary"
+                indicatorColor="primary"
+                classes={{
+                  root: classes.tabsRoot,
+                }}
+              >
+                <Tab
+                  className={classes.tabs}
+                  value="models"
+                  label="Modelos"
+                  onClick={onTabClick}
+                />
+                <Tab
+                  className={classes.tabs}
+                  value="detail"
+                  label="Ficha de modelo"
+                />
+              </Tabs>
+            </Box>
+          )}
           <Box
             sx={{
               display: "flex",
@@ -178,7 +173,7 @@ export default function PersistentDrawerRight() {
               height: "70px",
             }}
           >
-            {!open && (
+            {!open && !isMobile && (
               <Typography
                 fontFamily="inherit"
                 fontSize={14}
@@ -200,11 +195,11 @@ export default function PersistentDrawerRight() {
           </Box>
         </Toolbar>
       </AppBar>
-      <Main open={open}>
+      <Box width={"100%"}>
         <DrawerHeader />
         <Box
           sx={{
-            width: "80%",
+            width: isMobile ? "90%" : "80%",
             margin: "auto",
           }}
         >
@@ -226,7 +221,7 @@ export default function PersistentDrawerRight() {
             <CarDetails car={cars} />
           )}
         </Box>
-      </Main>
+      </Box>
       <Drawer
         sx={{
           width: drawerWidth,
@@ -235,7 +230,6 @@ export default function PersistentDrawerRight() {
             width: drawerWidth,
           },
         }}
-        variant="persistent"
         anchor="right"
         open={open}
       >
