@@ -67,24 +67,34 @@ export const CarsRender = () => {
   ];
   const [carsRendered, setCarsRendered] = useState(cars);
   useEffect(() => {
+    setSortedBy("Unsorted");
     category === "Todos"
       ? setCarsRendered(cars)
       : setCarsRendered(cars.filter((car) => car.segment === category));
   }, [category]);
 
-  useEffect(() => {
-    if (sortedBy === "") {
-      setCarsRendered(cars);
-    } else if (sortedBy === "Menor precio") {
-      setCarsRendered(cars.sort((a, b) => a.price - b.price));
-    } else if (sortedBy === "Mayor precio") {
-      setCarsRendered(cars.sort((a, b) => b.price - a.price));
-    } else if (sortedBy === "Menos reciente") {
-      setCarsRendered(cars.sort((a, b) => a.year - b.year));
-    } else if (sortedBy === "Más reciente") {
-      setCarsRendered(cars.sort((a, b) => b.year - a.year));
+  const handleSort = (e) => {
+    setSortedBy(e);
+    if (e === "") {
+      setCarsRendered(carsRendered);
+    } else if (e === "Menor precio") {
+      setCarsRendered(carsRendered.sort((a, b) => a.price - b.price));
+    } else if (e === "Mayor precio") {
+      setCarsRendered(carsRendered.sort((a, b) => b.price - a.price));
+    } else if (e === "Menos reciente") {
+      setCarsRendered(carsRendered.sort((a, b) => a.year - b.year));
+    } else if (e === "Más reciente") {
+      setCarsRendered(carsRendered.sort((a, b) => b.year - a.year));
     }
-  }, [sortedBy]);
+  };
+
+  const handleSelectCategory = (e) => {
+    setCategory(e);
+    e === "Todos"
+      ? setCarsRendered(cars)
+      : setCarsRendered(cars.filter((car) => car.segment === e));
+  };
+
   return (
     <Box>
       <Box>
@@ -130,7 +140,7 @@ export const CarsRender = () => {
             <Select
               variant="standard"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => handleSelectCategory(e.target.value)}
               sx={{
                 fontFamily: "inherit",
                 fontSize: 14,
@@ -174,7 +184,7 @@ export const CarsRender = () => {
           <Select
             variant="standard"
             value={sortedBy}
-            onChange={(e) => setSortedBy(e.target.value)}
+            onChange={(e) => handleSort(e.target.value)}
             sx={{
               fontFamily: "inherit",
               fontSize: 14,
